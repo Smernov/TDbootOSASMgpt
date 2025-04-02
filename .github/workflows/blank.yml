@@ -1,0 +1,30 @@
+name: Build and Test Bootloader
+
+on:
+  push:
+    branches:
+      - main  # или ветка, на которой вы работаете
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest  # Используем Linux для выполнения задач
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2  # Проверяем код из репозитория
+
+    - name: Install Nasm and QEMU
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y nasm qemu
+
+    - name: Compile bootloader
+      run: |
+        nasm -f bin boot.asm -o boot.bin  # Команда для компиляции
+
+    - name: Run the bootloader with QEMU
+      run: |
+        qemu-system-x86_64 -drive format=raw,file=boot.bin  # Команда для тестирования
